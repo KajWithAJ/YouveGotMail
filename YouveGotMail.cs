@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Oxide.Plugins
 {
-    [Info("You've Got Mail", "KajWithAJ", "0.0.3")]
+    [Info("You've Got Mail", "KajWithAJ", "1.0.0")]
     [Description("Notifies online players when they receive mail in their mailbox.")]
     class YouveGotMail : RustPlugin
     {
@@ -25,12 +25,15 @@ namespace Oxide.Plugins
         void OnItemSubmit(Item item, Mailbox mailbox, BasePlayer player)
         {
             if (mailbox.ShortPrefabName == "mailbox.deployed") {
+                string coordinates = MapHelper.PositionToGrid(mailbox.transform.position);
                 ulong ownerID = mailbox.OwnerID;
+                Puts($"{player.displayName} in mailbox of {ownerID} at {coordinates}");
+                
 
                 BasePlayer owner = BasePlayer.FindByID(ownerID);
                 if (owner != null) {
                     if (permission.UserHasPermission(owner.UserIDString, MailboxPermission)) {
-                        string coordinates = PhoneController.PositionToGridCoord(mailbox.transform.position);
+                        
                         string message = lang.GetMessage("ReceivedMail", this, owner.UserIDString);
                         Player.Message(owner, string.Format(message, player.displayName, coordinates));
                     }
